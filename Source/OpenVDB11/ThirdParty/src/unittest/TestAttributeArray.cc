@@ -1429,7 +1429,7 @@ TestAttributeArray::testDelayedLoad()
 #ifdef _WIN32
     if (tempDir.empty()) {
         char tempDirBuffer[MAX_PATH+1];
-        int tempDirLen = GetTempPath(MAX_PATH+1, tempDirBuffer);
+        int tempDirLen = GetTempPathA(MAX_PATH+1, tempDirBuffer);
         EXPECT_TRUE(tempDirLen > 0 && tempDirLen <= MAX_PATH);
         tempDir = tempDirBuffer;
     }
