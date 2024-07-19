@@ -41,8 +41,8 @@
 #include <gtest/gtest.h>
 
 // define the environment variable VDB_DATA_PATH to use models from the web
-// e.g. setenv VDB_DATA_PATH /home/kmu/dev/data/vdb
-// or   export VDB_DATA_PATH=/Users/ken/dev/data/vdb
+// e.g. setenv VDB_DATA_PATH /home/kmu/dev/vdb
+// or   export VDB_DATA_PATH=/Users/ken/dev/vdb
 
 // The fixture for testing class.
 class TestOpenVDB : public ::testing::Test
@@ -634,7 +634,7 @@ TEST_F(TestOpenVDB, OpenToNanoVDB_Model)
     //mTimer.start("Generating NanoVDB grid");
     auto handle = nanovdb::createNanoGrid(*srcGrid);
     //mTimer.start("Writing NanoVDB grid");
-    nanovdb::io::writeGrid("data/test.nvdb", handle, this->getCodec());
+    nanovdb::io::writeGrid("test.nvdb", handle, this->getCodec());
     //mTimer.stop();
 
     auto dstGrid = handle.grid<float>();
@@ -751,8 +751,8 @@ TEST_F(TestOpenVDB, OpenToNanoVDB_Fp4)
         };
         tbb::parallel_for(openGrid->evalActiveVoxelBoundingBox(), kernel);
 
-        nanovdb::io::writeGrid("data/test_fp4.nvdb", handle, this->getCodec());
-        handle = nanovdb::io::readGrid("data/test_fp4.nvdb");
+        nanovdb::io::writeGrid("test_fp4.nvdb", handle, this->getCodec());
+        handle = nanovdb::io::readGrid("test_fp4.nvdb");
         nanoGrid = handle.grid<nanovdb::Fp4>();
         EXPECT_TRUE(nanoGrid);
 
@@ -834,9 +834,9 @@ TEST_F(TestOpenVDB, OpenToNanoVDB_Fp8)
         };
         tbb::parallel_for(openGrid->evalActiveVoxelBoundingBox(), kernel);
 
-        nanovdb::io::writeGrid("data/test_fp8.nvdb", handle, this->getCodec());
+        nanovdb::io::writeGrid("test_fp8.nvdb", handle, this->getCodec());
 
-        handle = nanovdb::io::readGrid("data/test_fp8.nvdb");
+        handle = nanovdb::io::readGrid("test_fp8.nvdb");
         nanoGrid = handle.grid<nanovdb::Fp8>();
         EXPECT_TRUE(nanoGrid);
 
@@ -920,9 +920,9 @@ TEST_F(TestOpenVDB, OpenToNanoVDB_Fp16)
         };
         tbb::parallel_for(openGrid->evalActiveVoxelBoundingBox(), kernel);
 
-        nanovdb::io::writeGrid("data/test_fp16.nvdb", handle, this->getCodec());
+        nanovdb::io::writeGrid("test_fp16.nvdb", handle, this->getCodec());
 
-        handle = nanovdb::io::readGrid("data/test_fp16.nvdb");
+        handle = nanovdb::io::readGrid("test_fp16.nvdb");
         nanoGrid = handle.grid<nanovdb::Fp16>();
         EXPECT_TRUE(nanoGrid);
 
@@ -1000,7 +1000,7 @@ TEST_F(TestOpenVDB, OpenToNanoVDB_FpN)
         auto* nanoGrid = handle.grid<nanovdb::FpN>();
         EXPECT_TRUE(nanoGrid);
 
-        nanovdb::io::writeGrid("data/test_fpN.nvdb", handle, this->getCodec());
+        nanovdb::io::writeGrid("test_fpN.nvdb", handle, this->getCodec());
 
         auto kernel = [&](const openvdb::CoordBBox& bbox) {
             auto nanoAcc = nanoGrid->getAccessor();
@@ -1016,7 +1016,7 @@ TEST_F(TestOpenVDB, OpenToNanoVDB_FpN)
         };
         nanovdb::forEach(openGrid->evalActiveVoxelBoundingBox(), kernel);
 
-        handle = nanovdb::io::readGrid("data/test_fpN.nvdb");
+        handle = nanovdb::io::readGrid("test_fpN.nvdb");
         nanoGrid = handle.grid<nanovdb::FpN>();
         EXPECT_TRUE(nanoGrid);
 
@@ -1584,7 +1584,7 @@ TEST_F(TestOpenVDB, NanoToOpenVDB_BuildGrid)
 TEST_F(TestOpenVDB, NanoToOpenVDB)
 {
     //mTimer.start("Reading NanoVDB grids from file");
-    auto handles = nanovdb::io::readGrids("data/test.nvdb");
+    auto handles = nanovdb::io::readGrids("test.nvdb");
     //mTimer.stop();
 
     EXPECT_EQ(1u, handles.size());
@@ -1632,7 +1632,7 @@ TEST_F(TestOpenVDB, File)
     auto srcGrid = this->getSrcGrid();
 
     //mTimer.start("Reading NanoVDB grids from file");
-    auto handles = nanovdb::io::readGrids("data/test.nvdb");
+    auto handles = nanovdb::io::readGrids("test.nvdb");
     //mTimer.stop();
 
     EXPECT_EQ(1u, handles.size());
@@ -1754,18 +1754,18 @@ TEST_F(TestOpenVDB, MultiFile)
         handles.push_back(nanovdb::createNanoGrid(grid));
     }
 
-    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("data/multi.nvdb", handles, this->getCodec());
+    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("multi.nvdb", handles, this->getCodec());
 
     { // read grid meta data and test it
         //mTimer.start("nanovdb::io::readGridMetaData");
-        auto meta = nanovdb::io::readGridMetaData("data/multi.nvdb");
+        auto meta = nanovdb::io::readGridMetaData("multi.nvdb");
         //mTimer.stop();
         EXPECT_EQ(18u, meta.size());
         EXPECT_EQ(std::string("Double grid"), meta.back().gridName);
     }
     { // read in32 grid and test values
         //mTimer.start("Reading multiple grids from file");
-        auto handles = nanovdb::io::readGrids("data/multi.nvdb");
+        auto handles = nanovdb::io::readGrids("multi.nvdb");
         //mTimer.stop();
         EXPECT_EQ(18u, handles.size());
         auto& handle = handles.front();
@@ -1815,7 +1815,7 @@ TEST_F(TestOpenVDB, MultiFile)
     }
     { // read empty in32 grid and test values
         //mTimer.start("Reading multiple grids from file");
-        auto handles = nanovdb::io::readGrids("data/multi.nvdb");
+        auto handles = nanovdb::io::readGrids("multi.nvdb");
         //mTimer.stop();
         EXPECT_EQ(18u, handles.size());
         auto& handle = handles[1];
@@ -1853,7 +1853,7 @@ TEST_F(TestOpenVDB, MultiFile)
     }
     { // read mask grid and test values
         //mTimer.start("Reading multiple grids from file");
-        auto handles = nanovdb::io::readGrids("data/multi.nvdb");
+        auto handles = nanovdb::io::readGrids("multi.nvdb");
         //mTimer.stop();
         EXPECT_EQ(18u, handles.size());
         auto& handle = handles[2];
@@ -1894,7 +1894,7 @@ TEST_F(TestOpenVDB, MultiFile)
     }
     { // read bool grid and test values
         //mTimer.start("Reading multiple grids from file");
-        auto handles = nanovdb::io::readGrids("data/multi.nvdb");
+        auto handles = nanovdb::io::readGrids("multi.nvdb");
         //mTimer.stop();
         EXPECT_EQ(18u, handles.size());
         auto& handle = handles[3];
@@ -1937,7 +1937,7 @@ TEST_F(TestOpenVDB, MultiFile)
         EXPECT_FALSE(grid->isMask());
     }
     { // read vec3f grid and test values
-        auto handles = nanovdb::io::readGrids("data/multi.nvdb");
+        auto handles = nanovdb::io::readGrids("multi.nvdb");
         EXPECT_EQ(18u, handles.size());
         auto& handle = handles[4];
         EXPECT_TRUE(handle);
@@ -1959,7 +1959,7 @@ TEST_F(TestOpenVDB, MultiFile)
         EXPECT_TRUE(grid->isStaggered());
     }
     { // read vec4f grid and test values
-        auto handles = nanovdb::io::readGrids("data/multi.nvdb");
+        auto handles = nanovdb::io::readGrids("multi.nvdb");
         EXPECT_EQ(18u, handles.size());
         auto& handle = handles[5];
         EXPECT_TRUE(handle);
@@ -1982,7 +1982,7 @@ TEST_F(TestOpenVDB, MultiFile)
     }
      { // read int64 grid and test values
         //mTimer.start("Reading multiple grids from file");
-        auto handles = nanovdb::io::readGrids("data/multi.nvdb");
+        auto handles = nanovdb::io::readGrids("multi.nvdb");
         //mTimer.stop();
         EXPECT_EQ(18u, handles.size());
         auto& handle = handles[6];
@@ -2006,7 +2006,7 @@ TEST_F(TestOpenVDB, MultiFile)
         EXPECT_FALSE(grid->isStaggered());
     }
     { // read double grid and test values
-        auto handles = nanovdb::io::readGrids("data/multi.nvdb");
+        auto handles = nanovdb::io::readGrids("multi.nvdb");
         EXPECT_EQ(18u, handles.size());
         auto& handle = handles.back();
         EXPECT_TRUE(handle);
@@ -2080,7 +2080,7 @@ TEST_F(TestOpenVDB, LevelSetFiles)
     }
 
     std::vector<std::string> foundModels;
-    std::ofstream            os("data/ls.nvdb", std::ios::out | std::ios::binary);
+    std::ofstream            os("ls.nvdb", std::ios::out | std::ios::binary);
     for (const auto& fileName : fileNames) {
         //mTimer.start("\nReading grid from the file \"" + fileName + "\"");
         try {
@@ -2118,7 +2118,7 @@ TEST_F(TestOpenVDB, LevelSetFiles)
     };
 
     //mTimer.start("Read GridMetaData from file");
-    auto meta = nanovdb::io::readGridMetaData("data/ls.nvdb");
+    auto meta = nanovdb::io::readGridMetaData("ls.nvdb");
     //mTimer.stop();
     EXPECT_EQ(foundModels.size(), meta.size());
     for (size_t i = 0; i < foundModels.size(); ++i) {
@@ -2128,15 +2128,15 @@ TEST_F(TestOpenVDB, LevelSetFiles)
     }
 
     // test reading from non-existing file
-    EXPECT_THROW(nanovdb::io::readGrid("data/ls.vdb", getGridName(foundModels[0])), std::runtime_error);
+    EXPECT_THROW(nanovdb::io::readGrid("ls.vdb", getGridName(foundModels[0])), std::runtime_error);
 
     // test reading of non-existing grid from an existing file
-    EXPECT_THROW(nanovdb::io::readGrid("data/ls.nvdb", "bunny"), std::runtime_error);
+    EXPECT_THROW(nanovdb::io::readGrid("ls.nvdb", "bunny"), std::runtime_error);
 
     // test reading existing grid from an existing file
     {
         auto gridName = getGridName(foundModels[0]);
-        auto handle = nanovdb::io::readGrid("data/ls.nvdb", gridName);
+        auto handle = nanovdb::io::readGrid("ls.nvdb", gridName);
         EXPECT_TRUE(handle);
         EXPECT_FALSE(handle.grid<double>());
         auto grid = handle.grid<float>();
@@ -2158,7 +2158,7 @@ TEST_F(TestOpenVDB, FogFiles)
     }
 
     std::vector<std::string> foundModels;
-    std::ofstream            os("data/fog.nvdb", std::ios::out | std::ios::binary);
+    std::ofstream            os("fog.nvdb", std::ios::out | std::ios::binary);
     for (const auto& fileName : fileNames) {
         //mTimer.start("Reading grid from the file \"" + fileName + "\"");
         try {
@@ -2188,7 +2188,7 @@ TEST_F(TestOpenVDB, FogFiles)
     auto getGridName = [](const std::string&){return std::string("density");};
 
     //mTimer.start("Read GridMetaData from file");
-    auto meta = nanovdb::io::readGridMetaData("data/fog.nvdb");
+    auto meta = nanovdb::io::readGridMetaData("fog.nvdb");
     //mTimer.stop();
     EXPECT_EQ(foundModels.size(), meta.size());
     for (size_t i = 0; i < foundModels.size(); ++i) {
@@ -2198,16 +2198,16 @@ TEST_F(TestOpenVDB, FogFiles)
     }
 
     // test reading from non-existing file
-    EXPECT_THROW(nanovdb::io::readGrid("data/fog.vdb", getGridName(foundModels[0])), std::runtime_error);
+    EXPECT_THROW(nanovdb::io::readGrid("fog.vdb", getGridName(foundModels[0])), std::runtime_error);
 
     // test reading of non-existing grid from an existing file
-    EXPECT_THROW(nanovdb::io::readGrid("data/fog.nvdb", "bunny"), std::runtime_error);
+    EXPECT_THROW(nanovdb::io::readGrid("fog.nvdb", "bunny"), std::runtime_error);
 
     // test reading existing grid from an existing file
     {
         //const std::string gridName("density");
         auto gridName = getGridName(foundModels[0]);
-        auto handle = nanovdb::io::readGrid("data/fog.nvdb", gridName);
+        auto handle = nanovdb::io::readGrid("fog.nvdb", gridName);
         EXPECT_TRUE(handle);
         EXPECT_FALSE(handle.grid<double>());
         auto grid = handle.grid<float>();
@@ -2228,7 +2228,7 @@ TEST_F(TestOpenVDB, PointFiles)
         return;
     }
 
-    std::ofstream os("data/points.nvdb", std::ios::out | std::ios::binary);
+    std::ofstream os("points.nvdb", std::ios::out | std::ios::binary);
     for (const auto& fileName : fileNames) {
         //mTimer.start("Reading grid from the file \"" + fileName + "\"");
         try {
@@ -2328,14 +2328,14 @@ TEST_F(TestOpenVDB, Trilinear)
     //mTimer.restart("Generating NanoVDB grid");
     auto handle = nanovdb::createNanoGrid(*srcGrid);
     //mTimer.restart("Writing NanoVDB grid");
-    nanovdb::io::writeGrid("data/tmp.nvdb", handle);
+    nanovdb::io::writeGrid("tmp.nvdb", handle);
     //mTimer.stop();
     handle.reset();
     EXPECT_FALSE(handle.grid<float>());
     EXPECT_FALSE(handle.grid<double>());
 
     //mTimer.start("Reading NanoVDB from file");
-    auto handles = nanovdb::io::readGrids("data/tmp.nvdb");
+    auto handles = nanovdb::io::readGrids("tmp.nvdb");
     //mTimer.stop();
     EXPECT_EQ(1u, handles.size());
     auto* dstGrid = handles[0].grid<float>();
@@ -2394,16 +2394,16 @@ TEST_F(TestOpenVDB, Triquadratic)
     //mTimer.restart("Generating NanoVDB grid");
     auto handle = nanovdb::createNanoGrid(*srcGrid);
     //mTimer.restart("Writing NanoVDB grid");
-    nanovdb::io::writeGrid("data/tmp.nvdb", handle);
+    nanovdb::io::writeGrid("tmp.nvdb", handle);
     //mTimer.stop();
 
     { //test File::hasGrid
-        EXPECT_TRUE(nanovdb::io::hasGrid("data/tmp.nvdb", "Tri-Quadratic"));
-        EXPECT_FALSE(nanovdb::io::hasGrid("data/tmp.nvdb", "Tri-Linear"));
+        EXPECT_TRUE(nanovdb::io::hasGrid("tmp.nvdb", "Tri-Quadratic"));
+        EXPECT_FALSE(nanovdb::io::hasGrid("tmp.nvdb", "Tri-Linear"));
     }
 
     //mTimer.start("Reading NanoVDB from file");
-    auto handles = nanovdb::io::readGrids("data/tmp.nvdb");
+    auto handles = nanovdb::io::readGrids("tmp.nvdb");
     //mTimer.stop();
     auto* dstGrid = handles[0].grid<double>();
     EXPECT_TRUE(dstGrid);
@@ -2453,16 +2453,16 @@ TEST_F(TestOpenVDB, Tricubic)
     //mTimer.restart("Generating NanoVDB grid");
     auto handle = nanovdb::createNanoGrid(*srcGrid);
     //mTimer.restart("Writing NanoVDB grid");
-    nanovdb::io::writeGrid("data/tmp.nvdb", handle);
+    nanovdb::io::writeGrid("tmp.nvdb", handle);
     //mTimer.stop();
 
     { //test File::hasGrid
-        EXPECT_TRUE(nanovdb::io::hasGrid("data/tmp.nvdb", "Tri-Cubic"));
-        EXPECT_FALSE(nanovdb::io::hasGrid("data/tmp.nvdb", "Tri-Linear"));
+        EXPECT_TRUE(nanovdb::io::hasGrid("tmp.nvdb", "Tri-Cubic"));
+        EXPECT_FALSE(nanovdb::io::hasGrid("tmp.nvdb", "Tri-Linear"));
     }
 
     //mTimer.start("Reading NanoVDB from file");
-    auto handles = nanovdb::io::readGrids("data/tmp.nvdb");
+    auto handles = nanovdb::io::readGrids("tmp.nvdb");
     //mTimer.stop();
     auto* dstGrid = handles[0].grid<double>();
     EXPECT_TRUE(dstGrid);

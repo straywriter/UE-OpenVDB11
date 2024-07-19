@@ -3576,22 +3576,22 @@ TEST_F(TestNanoVDB, GridBuilder_Fp4)
         };
         nanovdb::forEach(nanoGrid->indexBBox(), kernel);
 
-        nanovdb::io::writeGrid("data/sphere_fp4.nvdb", handle);
-        ASSERT_THROW(nanovdb::io::readGrid("data/sphere_fp4.nvdb", 1), std::runtime_error);
+        nanovdb::io::writeGrid("sphere_fp4.nvdb", handle);
+        ASSERT_THROW(nanovdb::io::readGrid("sphere_fp4.nvdb", 1), std::runtime_error);
         //nanovdb::CpuTimer timer;
         //timer.start("read all grids");
-        //handle = nanovdb::io::readGrid("data/sphere_fp4.nvdb");
+        //handle = nanovdb::io::readGrid("sphere_fp4.nvdb");
         //timer.start("read first grid");
-        handle = nanovdb::io::readGrid("data/sphere_fp4.nvdb", 0);
+        handle = nanovdb::io::readGrid("sphere_fp4.nvdb", 0);
         //timer.stop();
         nanoGrid = handle.grid<VoxelT>();
         EXPECT_TRUE(nanoGrid);
         nanovdb::forEach(nanoGrid->indexBBox(), kernel);
 
         //timer.start("read first grid");
-        //handle = nanovdb::io::readGrid("data/sphere_fp4.nvdb", 0);
+        //handle = nanovdb::io::readGrid("sphere_fp4.nvdb", 0);
         //timer.start("read all grids");
-        handle = nanovdb::io::readGrid("data/sphere_fp4.nvdb");
+        handle = nanovdb::io::readGrid("sphere_fp4.nvdb");
         //timer.stop();
         nanoGrid = handle.grid<VoxelT>();
         EXPECT_TRUE(nanoGrid);
@@ -3711,8 +3711,8 @@ TEST_F(TestNanoVDB, GridBuilder_Fp8)
         };
         nanovdb::forEach(nanoGrid->indexBBox(), kernel);
 
-        nanovdb::io::writeGrid("data/sphere_fp8.nvdb", handle);
-        handle = nanovdb::io::readGrid("data/sphere_fp8.nvdb");
+        nanovdb::io::writeGrid("sphere_fp8.nvdb", handle);
+        handle = nanovdb::io::readGrid("sphere_fp8.nvdb");
         nanoGrid = handle.grid<VoxelT>();
         EXPECT_TRUE(nanoGrid);
 
@@ -3831,8 +3831,8 @@ TEST_F(TestNanoVDB, GridBuilder_Fp16)
         };
         nanovdb::forEach(nanoGrid->indexBBox(), kernel);
 
-        nanovdb::io::writeGrid("data/sphere_fp16.nvdb", handle);
-        handle = nanovdb::io::readGrid("data/sphere_fp16.nvdb");
+        nanovdb::io::writeGrid("sphere_fp16.nvdb", handle);
+        handle = nanovdb::io::readGrid("sphere_fp16.nvdb");
         nanoGrid = handle.grid<VoxelT>();
         EXPECT_TRUE(nanoGrid);
 
@@ -4019,8 +4019,8 @@ TEST_F(TestNanoVDB, GridBuilder_FpN_Sphere)
         };
         nanovdb::forEach(nanoGrid->indexBBox(), kernel);
 
-        nanovdb::io::writeGrid("data/sphere_fpN.nvdb", handle);
-        handle = nanovdb::io::readGrid("data/sphere_fpN.nvdb");
+        nanovdb::io::writeGrid("sphere_fpN.nvdb", handle);
+        handle = nanovdb::io::readGrid("sphere_fpN.nvdb");
         nanoGrid = handle.grid<VoxelT>();
         EXPECT_TRUE(nanoGrid);
 
@@ -6044,22 +6044,22 @@ TEST_F(TestNanoVDB, MultiFile)
         handles.push_back(nanovdb::createNanoGrid(grid));
     }
 #if defined(NANOVDB_USE_BLOSC)
-    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("data/multi1.nvdb", handles, nanovdb::io::Codec::BLOSC);
+    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("multi1.nvdb", handles, nanovdb::io::Codec::BLOSC);
 #elif defined(NANOVDB_USE_ZIP)
-    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("data/multi1.nvdb", handles, nanovdb::io::Codec::ZIP);
+    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("multi1.nvdb", handles, nanovdb::io::Codec::ZIP);
 #else
-    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("data/multi1.nvdb", handles, nanovdb::io::Codec::NONE);
+    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("multi1.nvdb", handles, nanovdb::io::Codec::NONE);
 #endif
     { // read grid meta data and test it
         //mTimer.start("nanovdb::io::readGridMetaData");
-        auto meta = nanovdb::io::readGridMetaData("data/multi1.nvdb");
+        auto meta = nanovdb::io::readGridMetaData("multi1.nvdb");
         //mTimer.stop();
         EXPECT_EQ(15u, meta.size());
         EXPECT_EQ(std::string("Double grid"), meta.back().gridName);
     }
     { // read in32 grid and test values
         //mTimer.start("Reading multiple grids from file");
-        auto handles = nanovdb::io::readGrids("data/multi1.nvdb");
+        auto handles = nanovdb::io::readGrids("multi1.nvdb");
         //mTimer.stop();
         EXPECT_EQ(15u, handles.size());
         auto& handle = handles.front();
@@ -6105,7 +6105,7 @@ TEST_F(TestNanoVDB, MultiFile)
     }
     { // read empty in32 grid and test values
         //mTimer.start("Reading multiple grids from file");
-        auto handles = nanovdb::io::readGrids("data/multi1.nvdb");
+        auto handles = nanovdb::io::readGrids("multi1.nvdb");
         //mTimer.stop();
         EXPECT_EQ(15u, handles.size());
         auto& handle = handles[1];
@@ -6143,7 +6143,7 @@ TEST_F(TestNanoVDB, MultiFile)
     }
     { // read int64 grid and test values
         //mTimer.start("Reading multiple grids from file");
-        auto handles = nanovdb::io::readGrids("data/multi1.nvdb");
+        auto handles = nanovdb::io::readGrids("multi1.nvdb");
         //mTimer.stop();
         EXPECT_EQ(15u, handles.size());
         auto& handle = handles[3];
@@ -6166,7 +6166,7 @@ TEST_F(TestNanoVDB, MultiFile)
         EXPECT_FALSE(grid->isStaggered());
     }
     { // read vec3f grid and test values
-        auto handles = nanovdb::io::readGrids("data/multi1.nvdb");
+        auto handles = nanovdb::io::readGrids("multi1.nvdb");
         EXPECT_EQ(15u, handles.size());
         auto& handle = handles[2];
         EXPECT_TRUE(handle);
@@ -6188,7 +6188,7 @@ TEST_F(TestNanoVDB, MultiFile)
         EXPECT_TRUE(grid->isStaggered());
     }
     { // read double grid and test values
-        auto handles = nanovdb::io::readGrids("data/multi1.nvdb");
+        auto handles = nanovdb::io::readGrids("multi1.nvdb");
         EXPECT_EQ(15u, handles.size());
         auto& handle = handles.back();
         EXPECT_TRUE(handle);
@@ -6482,7 +6482,7 @@ TEST_F(TestNanoVDB, HostBuffer)
         std::unique_ptr<uint8_t[]> array(new uint8_t[poolSize + NANOVDB_DATA_ALIGNMENT]);// scoped buffer
         auto pool = nanovdb::HostBuffer::createPool(poolSize, nanovdb::alignPtr(array.get()));
         EXPECT_EQ(128ULL * 1024 * 1024, pool.poolSize());
-        auto handles = nanovdb::io::readGrids("data/multi1.nvdb", 0, pool);
+        auto handles = nanovdb::io::readGrids("multi1.nvdb", 0, pool);
         EXPECT_EQ(15u, handles.size());
         for (auto &h : handles) EXPECT_TRUE(h);
         EXPECT_EQ(std::string("Int32 grid"), handles[0].grid<int>()->gridName());
@@ -6492,7 +6492,7 @@ TEST_F(TestNanoVDB, HostBuffer)
         EXPECT_EQ(std::string("Double grid"), handles[14].grid<double>()->gridName());
         pool.reset();
         for (auto &h : handles) EXPECT_FALSE(h);
-        handles = nanovdb::io::readGrids("data/multi1.nvdb", 0, pool);
+        handles = nanovdb::io::readGrids("multi1.nvdb", 0, pool);
         EXPECT_EQ(15u, handles.size());
         for (auto &h : handles) EXPECT_TRUE(h);
         EXPECT_EQ(std::string("Int32 grid"), handles[0].grid<int>()->gridName());
@@ -6501,7 +6501,7 @@ TEST_F(TestNanoVDB, HostBuffer)
         EXPECT_EQ(std::string("Int64 grid"), handles[3].grid<int64_t>()->gridName());
         EXPECT_EQ(std::string("Double grid"), handles[14].grid<double>()->gridName());
     } catch(const std::exception& e) {
-        std::cout << "Unable to read \"data/multi1.nvdb\" for unit-test\n" << e.what() << std::endl;
+        std::cout << "Unable to read \"multi1.nvdb\" for unit-test\n" << e.what() << std::endl;
     }
 }// HostBuffer
 
@@ -7481,10 +7481,10 @@ TEST_F(TestNanoVDB, HelloWorld_IndexGrid_Dense)
     EXPECT_EQ(1.0f, fltGrid->tree().getValue(ijk));
 
     {// create an IndexGrid with an internal channel and write it to file
-        nanovdb::io::writeGrid("data/index_grid.nvdb", nanovdb::createNanoGrid<nanovdb::FloatGrid, nanovdb::ValueIndex>(*fltGrid,1u, true, true));// 1 channel, include stats and tile values
+        nanovdb::io::writeGrid("index_grid.nvdb", nanovdb::createNanoGrid<nanovdb::FloatGrid, nanovdb::ValueIndex>(*fltGrid,1u, true, true));// 1 channel, include stats and tile values
     }
     {// read and test IndexGrid
-        auto tmp = nanovdb::io::readGrid("data/index_grid.nvdb");
+        auto tmp = nanovdb::io::readGrid("index_grid.nvdb");
         auto *idxGrid = tmp.grid<nanovdb::ValueIndex>();
         EXPECT_TRUE(idxGrid);
         //std::cerr << "Dense IndexGrid size: " << (idxGrid->gridSize() >> 20) << " MB\n";
@@ -7517,10 +7517,10 @@ TEST_F(TestNanoVDB, HelloWorld_IndexGrid_Sparse)
     EXPECT_EQ(1.0f, fltGrid->tree().getValue(ijk));
 
     {// create an IndexGrid with an internal channel and write it to file
-        nanovdb::io::writeGrid("data/index_grid.nvdb", nanovdb::createNanoGrid<nanovdb::FloatGrid, nanovdb::ValueOnIndex>(*fltGrid, 1u, false, true));// 1 channel, no stats and include tile values
+        nanovdb::io::writeGrid("index_grid.nvdb", nanovdb::createNanoGrid<nanovdb::FloatGrid, nanovdb::ValueOnIndex>(*fltGrid, 1u, false, true));// 1 channel, no stats and include tile values
     }
     {// read and test IndexGrid
-        auto tmp = nanovdb::io::readGrid("data/index_grid.nvdb");
+        auto tmp = nanovdb::io::readGrid("index_grid.nvdb");
         auto *idxGrid = tmp.grid<nanovdb::ValueOnIndex>();
         EXPECT_TRUE(idxGrid);
         //std::cerr << "Sparse IndexGrid size: " << (idxGrid->gridSize() >> 20) << " MB\n";
@@ -7553,10 +7553,10 @@ TEST_F(TestNanoVDB, HelloWorld_IndexGrid_Sparse2)
     EXPECT_EQ(1.0f, fltGrid->tree().getValue(ijk));
 
     {// create an IndexGrid with an internal channel and write it to file
-        nanovdb::io::writeGrid("data/index_grid2.nvdb", nanovdb::createNanoGrid<nanovdb::FloatGrid, nanovdb::ValueOnIndex>(*fltGrid, 1u, false, false));// 1 channel, no stats and no tile values
+        nanovdb::io::writeGrid("index_grid2.nvdb", nanovdb::createNanoGrid<nanovdb::FloatGrid, nanovdb::ValueOnIndex>(*fltGrid, 1u, false, false));// 1 channel, no stats and no tile values
     }
     {// read and test IndexGrid
-        auto tmp = nanovdb::io::readGrid("data/index_grid2.nvdb");
+        auto tmp = nanovdb::io::readGrid("index_grid2.nvdb");
         auto *idxGrid = tmp.grid<nanovdb::ValueOnIndex>();
         EXPECT_TRUE(idxGrid);
         //std::cerr << "Sparse IndexGrid size: " << (idxGrid->gridSize() >> 20) << " MB\n";
@@ -7590,9 +7590,9 @@ TEST_F(TestNanoVDB, writeReadUncompressedGrid)
     EXPECT_TRUE(fltGrid1);
     EXPECT_EQ(1.0f, fltGrid1->tree().getValue(ijk));
 
-    nanovdb::io::writeUncompressedGrids("data/test1.nvdb", handles1);
+    nanovdb::io::writeUncompressedGrids("test1.nvdb", handles1);
 
-    auto handles2 = nanovdb::io::readUncompressedGrids<GridHandleT, std::vector>("data/test1.nvdb");
+    auto handles2 = nanovdb::io::readUncompressedGrids<GridHandleT, std::vector>("test1.nvdb");
     EXPECT_EQ(1u, handles2.size());
 
     auto *fltGrid2 = handles2[0].grid<float>();
@@ -7611,9 +7611,9 @@ TEST_F(TestNanoVDB, writeReadUncompressedGridRaw)
     EXPECT_TRUE(fltGrid1);
     EXPECT_EQ(1.0f, fltGrid1->tree().getValue(ijk));
 
-    nanovdb::io::writeUncompressedGrids("data/test1_raw.nvdb", handles1, true);
+    nanovdb::io::writeUncompressedGrids("test1_raw.nvdb", handles1, true);
 
-    auto handles2 = nanovdb::io::readUncompressedGrids<GridHandleT, std::vector>("data/test1_raw.nvdb");
+    auto handles2 = nanovdb::io::readUncompressedGrids<GridHandleT, std::vector>("test1_raw.nvdb");
     EXPECT_EQ(1u, handles2.size());
 
     auto *fltGrid2 = handles2[0].grid<float>();
@@ -7914,16 +7914,16 @@ TEST_F(TestNanoVDB, mergeSplitGrids)
     EXPECT_EQ(6u, handles1.size());
 
 #if defined(NANOVDB_USE_BLOSC)
-    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("data/merge1.nvdb", handles1, nanovdb::io::Codec::BLOSC);
+    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("merge1.nvdb", handles1, nanovdb::io::Codec::BLOSC);
 #elif defined(NANOVDB_USE_ZIP)
-    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("data/merge1.nvdb", handles1, nanovdb::io::Codec::ZIP);
+    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("merge1.nvdb", handles1, nanovdb::io::Codec::ZIP);
 #else
-    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("data/merge1.nvdb", handles1, nanovdb::io::Codec::NONE);
+    nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("merge1.nvdb", handles1, nanovdb::io::Codec::NONE);
 #endif
-    auto meta = nanovdb::io::readGridMetaData("data/merge1.nvdb");
+    auto meta = nanovdb::io::readGridMetaData("merge1.nvdb");
     EXPECT_EQ(10u, meta.size());
     EXPECT_EQ(std::string("sphere_190"), meta.back().gridName);
-    auto handles3 = nanovdb::io::readGrids("data/merge1.nvdb");
+    auto handles3 = nanovdb::io::readGrids("merge1.nvdb");
     EXPECT_EQ(6u, handles3.size());
     auto& handle = handles3[5];
     EXPECT_EQ(5u, handle.gridCount());
@@ -7970,15 +7970,15 @@ TEST_F(TestNanoVDB, writeReadRadGrid)
 
     {// create an IndexGrid with an internal channel and write it to file
         auto handle = nanovdb::createNanoGrid<nanovdb::FloatGrid, nanovdb::ValueIndex>(*fltGrid,1u, true, true);// 1 channel, include stats and tile values
-        handle.write("data/raw_grid.nvdb");
+        handle.write("raw_grid.nvdb");
     }
     {// read and test IndexGrid
         nanovdb::GridHandle<> handle;
-        ASSERT_THROW(handle.read("data/merge1.nvdb"), std::logic_error);
+        ASSERT_THROW(handle.read("merge1.nvdb"), std::logic_error);
     }
     {// read and test IndexGrid
         nanovdb::GridHandle<> tmp;
-        tmp.read("data/raw_grid.nvdb");
+        tmp.read("raw_grid.nvdb");
         auto *idxGrid = tmp.grid<nanovdb::ValueIndex>();
         EXPECT_TRUE(idxGrid);
         //std::cerr << "Dense IndexGrid size: " << (idxGrid->gridSize() >> 20) << " MB\n";
@@ -8005,17 +8005,17 @@ TEST_F(TestNanoVDB, GridHandleIO)
 {
     auto handle = nanovdb::createLevelSetSphere<float>();
     EXPECT_TRUE(handle.grid<float>());
-    handle.write("data/sphere_raw.nvdb");
-    ASSERT_THROW(handle.read("data/dummy_raw.nvdb"), std::ios_base::failure);
-    ASSERT_THROW(handle.read("data/dummy_raw.nvdb"), std::exception);
-    handle.read("data/sphere_raw.nvdb");
+    handle.write("sphere_raw.nvdb");
+    ASSERT_THROW(handle.read("dummy_raw.nvdb"), std::ios_base::failure);
+    ASSERT_THROW(handle.read("dummy_raw.nvdb"), std::exception);
+    handle.read("sphere_raw.nvdb");
     auto *grid = handle.grid<float>();
     EXPECT_TRUE(handle.grid<float>());
-    handle.read("data/raw_grid.nvdb");
+    handle.read("raw_grid.nvdb");
     EXPECT_FALSE(handle.grid<float>());
     EXPECT_TRUE(handle.grid<nanovdb::ValueIndex>());
-    ASSERT_THROW(handle.read("data/merge1.nvdb"), std::logic_error);
-    ASSERT_THROW(handle.read("data/merge1.nvdb"), std::exception);
+    ASSERT_THROW(handle.read("merge1.nvdb"), std::logic_error);
+    ASSERT_THROW(handle.read("merge1.nvdb"), std::exception);
 }
 
 TEST_F(TestNanoVDB, GridCountAndIndex)
@@ -8027,10 +8027,10 @@ TEST_F(TestNanoVDB, GridCountAndIndex)
         handles.emplace_back(nanovdb::createLevelSetSphere<float>());
         EXPECT_EQ(3u, handles.size());
         for (auto &h : handles) EXPECT_EQ(1u, h.gridCount());
-        nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("data/3_spheres.nvdb", handles);
+        nanovdb::io::writeGrids<nanovdb::HostBuffer, std::vector>("3_spheres.nvdb", handles);
     }
     {// default readGrid
-        auto handle = nanovdb::io::readGrid("data/3_spheres.nvdb");
+        auto handle = nanovdb::io::readGrid("3_spheres.nvdb");
         EXPECT_EQ(1u, handle.gridCount());
         auto *grid = handle.grid<float>();
         EXPECT_TRUE(grid);
@@ -8041,7 +8041,7 @@ TEST_F(TestNanoVDB, GridCountAndIndex)
     }
     {// readGrid one by one
         for (uint32_t i=0; i<3u; ++i) {
-            auto handle = nanovdb::io::readGrid("data/3_spheres.nvdb", i);
+            auto handle = nanovdb::io::readGrid("3_spheres.nvdb", i);
             EXPECT_EQ(1u, handle.gridCount());
             auto *grid = handle.grid<float>();
             EXPECT_TRUE(grid);
@@ -8052,8 +8052,8 @@ TEST_F(TestNanoVDB, GridCountAndIndex)
         }
     }
     {// read all grids
-        auto handle = nanovdb::io::readGrid("data/3_spheres.nvdb", -1);
-        handle.write("data/3_spheres_raw.nvdb");
+        auto handle = nanovdb::io::readGrid("3_spheres.nvdb", -1);
+        handle.write("3_spheres_raw.nvdb");
         EXPECT_EQ(3u, handle.gridCount());
         for (uint32_t i=0; i<handle.gridCount(); ++i) {
             auto *grid = handle.grid<float>(i);
@@ -8065,8 +8065,8 @@ TEST_F(TestNanoVDB, GridCountAndIndex)
         }
     }
     {// read all raw grids
-        auto handle = nanovdb::io::readGrid("data/3_spheres_raw.nvdb", -1);
-        handle.write("data/3_spheres_raw.nvdb");
+        auto handle = nanovdb::io::readGrid("3_spheres_raw.nvdb", -1);
+        handle.write("3_spheres_raw.nvdb");
         EXPECT_EQ(3u, handle.gridCount());
         for (uint32_t i=0; i<handle.gridCount(); ++i) {
             auto *grid = handle.grid<float>(i);
@@ -8079,7 +8079,7 @@ TEST_F(TestNanoVDB, GridCountAndIndex)
     }
     {// read all raw grids
         nanovdb::GridHandle<> handle;
-        handle.read("data/3_spheres_raw.nvdb");
+        handle.read("3_spheres_raw.nvdb");
         EXPECT_EQ(3u, handle.gridCount());
         for (uint32_t i=0; i<handle.gridCount(); ++i) {
             auto *grid = handle.grid<float>(i);
@@ -8093,7 +8093,7 @@ TEST_F(TestNanoVDB, GridCountAndIndex)
     {// read single raw grid
         nanovdb::GridHandle<> handle;
         for (uint32_t i=0; i<3u; ++i) {
-            handle.read("data/3_spheres_raw.nvdb", i);
+            handle.read("3_spheres_raw.nvdb", i);
             EXPECT_EQ(1u, handle.gridCount());
             auto *grid = handle.grid<float>(0u);
             EXPECT_TRUE(grid);
@@ -8102,12 +8102,12 @@ TEST_F(TestNanoVDB, GridCountAndIndex)
             EXPECT_TRUE(nanovdb::validateChecksum(*grid));
             EXPECT_TRUE(nanovdb::validateChecksum(*grid, nanovdb::ChecksumMode::Full));
         }
-        ASSERT_THROW(handle.read("data/3_spheres_raw.nvdb", 4), std::runtime_error);
-        ASSERT_THROW(handle.read("data/3_spheres_raw.nvdb",-1), std::runtime_error);
+        ASSERT_THROW(handle.read("3_spheres_raw.nvdb", 4), std::runtime_error);
+        ASSERT_THROW(handle.read("3_spheres_raw.nvdb",-1), std::runtime_error);
     }
     {// read raw grids one by one
         for (uint32_t i=0; i<3u; ++i) {
-            auto handle = nanovdb::io::readGrid("data/3_spheres_raw.nvdb", i);
+            auto handle = nanovdb::io::readGrid("3_spheres_raw.nvdb", i);
             EXPECT_EQ(1u, handle.gridCount());
             auto *grid = handle.grid<float>();
             EXPECT_TRUE(grid);
@@ -8116,7 +8116,7 @@ TEST_F(TestNanoVDB, GridCountAndIndex)
             EXPECT_TRUE(nanovdb::validateChecksum(*grid));
             EXPECT_TRUE(nanovdb::validateChecksum(*grid, nanovdb::ChecksumMode::Full));
         }
-        ASSERT_THROW(nanovdb::io::readGrid("data/3_spheres_raw.nvdb", 4), std::runtime_error);
+        ASSERT_THROW(nanovdb::io::readGrid("3_spheres_raw.nvdb", 4), std::runtime_error);
     }
 }// GridCountAndIndex
 
