@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleInterface.h"
 
-class OpenVDB11UnitTestModule : public IModuleInterface
+class FOpenVDB11UnitTestModule : public IModuleInterface
 {
 
 public:
